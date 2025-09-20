@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -52,6 +53,8 @@ fun TimerScreen() {
         SettingsScreen(
             settingsManager = application.settingsManager,
             currentPrefix = currentPrefix,
+            isDndEnabled = uiState.isDndPermissionGranted,
+            onRequestDnd = { viewModel.requestDndPermission() },
             onBack = { showSettings = false }
         )
     } else {
@@ -79,13 +82,29 @@ fun TimerScreen() {
                 sessionType = uiState.sessionType,
                 timerState = uiState.timerState,
                 configuredFocusDuration = uiState.configuredFocusDuration,
-                onFocusDurationChange = { newMinutes -> viewModel.onFocusDurationChanged(newMinutes) }
+                configuredBreakDuration = uiState.configuredShortBreakDuration, // Assuming short break for now
+                onFocusDurationChange = { newMinutes -> viewModel.onFocusDurationChanged(newMinutes) },
+                onBreakDurationChange = { newMinutes -> viewModel.onBreakDurationChanged(newMinutes) }
             )
 
-            StartButton(
-                onClick = { viewModel.onStartClicked() },
-                timerState = uiState.timerState
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                StartButton(
+                    onClick = { viewModel.onStartClicked() },
+                    timerState = uiState.timerState
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                IconButton(onClick = { viewModel.onResetClicked() }) {
+                    Icon(
+                        Icons.Default.Refresh,
+                        contentDescription = "Reset Timer",
+                        modifier = Modifier.fillMaxSize(0.1f)
+                    )
+                }
+            }
         }
     }
 }
@@ -115,30 +134,36 @@ fun TimerDisplay(
     sessionType: SessionType,
     timerState: TimerState,
     configuredFocusDuration: Int,
-    onFocusDurationChange: (Int) -> Unit
+    configuredBreakDuration: Int,
+    onFocusDurationChange: (Int) -> Unit,
+    onBreakDurationChange: (Int) -> Unit
 ) {
-    val sessionText = when (sessionType) {
-        SessionType.FOCUS -> "Focus Time"
-        SessionType.SHORT_BREAK -> "Short Break"
-        SessionType.LONG_BREAK -> "Long Break"
-    }
     val isEnabled = timerState == TimerState.STOPPED
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         DotMatrixText(text = String.format("%02d:%02d", minutes, seconds))
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Button(
-                onClick = { onFocusDurationChange(configuredFocusDuration - 1) },
-                enabled = isEnabled
-            ) { Text("-") }
-            Spacer(modifier = Modifier.width(48.dp))
-            Text(text = sessionText, style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.width(48.dp))
-            Button(
-                onClick = { onFocusDurationChange(configuredFocusDuration + 1) },
-                enabled = isEnabled
-            ) { Text("+") }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Focus Time Controls
+        Text(text = "Focus Time", style = MaterialTheme.typography.bodyLarge)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
+            Button(onClick = { onFocusDurationChange(configuredFocusDuration - 1) }, enabled = isEnabled) { Text("-") }
+            Spacer(modifier = Modifier.width(16.dp))
+            DotMatrixText(text = "$configuredFocusDuration min", modifier = Modifier.width(100.dp))
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(onClick = { onFocusDurationChange(configuredFocusDuration + 1) }, enabled = isEnabled) { Text("+") }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Break Time Controls
+        Text(text = "Break Time", style = MaterialTheme.typography.bodyLarge)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
+            Button(onClick = { onBreakDurationChange(configuredBreakDuration - 1) }, enabled = isEnabled) { Text("-") }
+            Spacer(modifier = Modifier.width(16.dp))
+            DotMatrixText(text = "$configuredBreakDuration min", modifier = Modifier.width(100.dp))
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(onClick = { onBreakDurationChange(configuredBreakDuration + 1) }, enabled = isEnabled) { Text("+") }
         }
     }
 }

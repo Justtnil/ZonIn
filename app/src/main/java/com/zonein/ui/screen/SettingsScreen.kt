@@ -22,11 +22,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Switch
 import com.zonein.data.SettingsManager
+import com.zonein.viewmodel.TimerViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(settingsManager: SettingsManager, currentPrefix: String, onBack: () -> Unit) {
+fun SettingsScreen(
+    settingsManager: SettingsManager,
+    currentPrefix: String,
+    isDndEnabled: Boolean,
+    onRequestDnd: () -> Unit,
+    onBack: () -> Unit
+) {
     val scope = rememberCoroutineScope()
     val radioOptions = listOf("onii-chan", "onee-chan")
 
@@ -61,13 +69,28 @@ fun SettingsScreen(settingsManager: SettingsManager, currentPrefix: String, onBa
             ) {
                 RadioButton(
                     selected = (text == currentPrefix),
-                    onClick = null // null recommended for accessibility with selectable parent
+                    onClick = null
                 )
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp)
                 )
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+        Text("Permissions", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Auto Do Not Disturb", style = MaterialTheme.typography.bodyLarge)
+            Button(onClick = onRequestDnd, enabled = !isDndEnabled) {
+                Text(if (isDndEnabled) "Granted" else "Grant")
             }
         }
     }
