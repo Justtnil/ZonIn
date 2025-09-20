@@ -85,7 +85,14 @@ fun TimerScreen() {
             // ... (Top row) ...
 
             TimerDisplay(
-                // ... (parameters) ...
+                minutes = uiState.minutes,
+                seconds = uiState.seconds,
+                sessionType = uiState.sessionType,
+                timerState = uiState.timerState,
+                configuredFocusDuration = uiState.configuredFocusDuration,
+                configuredBreakDuration = uiState.configuredShortBreakDuration, // Assuming short break for now
+                onFocusDurationChange = { newMinutes -> viewModel.onFocusDurationChanged(newMinutes) },
+                onBreakDurationChange = { newMinutes -> viewModel.onBreakDurationChanged(newMinutes) }
             )
 
             Row(
