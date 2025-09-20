@@ -22,8 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// ... (TimerUiState, TimerState, SessionType enums remain the same)
-
 class TimerViewModel(
     private val repository: ZoneinRepository,
     private val settingsManager: SettingsManager,

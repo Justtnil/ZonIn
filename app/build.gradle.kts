@@ -77,6 +77,9 @@ dependencies {
     // Accompanist for Permissions
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
+    // Local Broadcast Manager
+    implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
+
     // Testing (Optional for now, but good practice)
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
