@@ -13,7 +13,7 @@ class ZoneinRepository(private val zoneinDao: ZoneinDao) {
     // A default UserStats to be used if the database is empty.
     private val defaultStats = UserStats(id = 1, totalFocusMinutes = 0, currentStreak = 0, longestStreak = 0, lastSessionTimestamp = 0)
 
-    val userStats: Flow<UserStats> = zoneinDao.getUserStats()
+    val userStats: Flow<UserStats> = zoneinDao.getUserStats().map { it ?: defaultStats }
 
     val zeninRating: Flow<Int> = userStats.map { stats ->
         // Zenin Rating = (Total Minutes) + (Streak * 10)
