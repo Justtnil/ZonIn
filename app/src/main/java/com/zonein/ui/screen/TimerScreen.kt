@@ -128,6 +128,14 @@ fun TimerScreen() {
 }
 
 @Composable
+fun ZeninRating(score: Int) {
+    Text(
+        text = "ZENIN: $score",
+        style = MaterialTheme.typography.headlineMedium
+    )
+}
+
+@Composable
 fun DndPermissionDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
