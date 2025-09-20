@@ -82,7 +82,16 @@ fun TimerScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // ... (Top row) ...
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ZeninRating(score = uiState.zeninScore)
+                IconButton(onClick = { showSettings = true }) {
+                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                }
+            }
 
             TimerDisplay(
                 minutes = uiState.minutes,
